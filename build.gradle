@@ -1,0 +1,28 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+def mainClassName = "by.geotesttask.GeoTestTask"
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'TestTask Jar File',
+                'Implementation-Version': version,
+                'Main-Class': mainClassName
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+dependencies {
+    compile 'com.googlecode.jcsv:jcsv:1.4.0'
+    compile 'com.google.maps:google-maps-services:0.1.5'
+    compile 'ch.qos.logback:logback-classic:1.1.2'
+}
