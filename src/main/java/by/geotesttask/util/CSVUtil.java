@@ -42,16 +42,20 @@ public final class CSVUtil {
      * @throws TechnicalException
      */
     public static List<LocationDescription> readCSVFile(String path) throws TechnicalException{
+        CSVReader<LocationDescription> timeZoneReader = null;
         try {
             Reader reader = new FileReader(path);
-            CSVReader<LocationDescription> timeZoneReader = new CSVReaderBuilder<LocationDescription>(reader)
+            timeZoneReader = new CSVReaderBuilder<LocationDescription>(reader)
                     .entryParser(new LocationDescriptionEntryParser())
                     .strategy(DEFAULT_STRATEGY).build();
             List<LocationDescription> tzs = timeZoneReader.readAll();
-            timeZoneReader.close();
             return tzs;
         }catch (IOException ex){
             throw new TechnicalException(ex);
+        }finally{
+            if(timeZoneReader != null){
+                timeZoneReader.close();
+            }
         }
     }
 
@@ -62,16 +66,20 @@ public final class CSVUtil {
      * @throws TechnicalException
      */
     public static void writeCSVFile(String path, List<LocationDescription> tzs) throws TechnicalException{
+        CSVWriter<LocationDescription> timeZoneWriter = null;
         try {
             Writer writer = new FileWriter(path);
-            CSVWriter<LocationDescription> timeZoneWriter = new CSVWriterBuilder<LocationDescription>(writer)
+            timeZoneWriter = new CSVWriterBuilder<LocationDescription>(writer)
                     .entryConverter(new LocationDescriptionEntryConverter())
                     .strategy(DEFAULT_STRATEGY).build();
             timeZoneWriter.writeAll(tzs);
             timeZoneWriter.flush();
-            timeZoneWriter.close();
         }catch (IOException ex){
             throw new TechnicalException(ex);
+        }finally{
+            if(timeZoneWriter != null){
+                timeZoneWriter.close();
+            }
         }
     }
 }
